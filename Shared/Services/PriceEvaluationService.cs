@@ -10,6 +10,13 @@ namespace Shared.Services
     {
         public List<ExchangeOrder> CalculateBestOrderPrice(List<ExchangeOrderBook> exchangeOrderBooks, decimal targetAmount, OrderType orderType)
         {
+
+            if (targetAmount <= 0)
+                throw new ArgumentException("TargetAmountError");
+
+            if (exchangeOrderBooks == null || !exchangeOrderBooks.Any())
+                throw new ArgumentException("NoOrderBooks");
+
             List<ExchangeOrder> allOrders = new List<ExchangeOrder>();
             if (orderType == OrderType.Buy)
             {
@@ -63,53 +70,21 @@ namespace Shared.Services
                 accumulatedAmount += amountToTake;
             }
 
-            return lowestBuyOrders;
-        }
-
-        // Calculate the highest sell orders
-        public List<ExchangeOrder> CalculateHighestSell(List<ExchangeOrderBook> exchangeOrderBooks, decimal targetAmount)
-        {
-            List<ExchangeOrder> highestSellOrders = new List<ExchangeOrder>();
-            decimal accumulatedAmount = 0;
-
-            List<ExchangeOrder> allSellOrders = exchangeOrderBooks
-                 .SelectMany(orderBook => orderBook.Asks, (orderBook, order) => new ExchangeOrder
-                 {
-                     Id = order.Order.Id,
-                     Time = order.Order.Time,
-                     Type = order.Order.Type,
-                     Kind = order.Order.Kind,
-                     Amount = order.Order.Amount,
-                     Price = order.Order.Price,
-                     ExchangeName = orderBook.ExchangeName
-                 })
-                .OrderByDescending(order => order.Price)
-                .ToList();
-
-            foreach (var order in allSellOrders)
+            if (accumulatedAmount < targetAmount)
             {
-                if (accumulatedAmount >= targetAmount)
-                    break;
-
-                decimal remainingAmount = targetAmount - accumulatedAmount;
-
-                decimal amountToTake = Math.Min(order.Amount, remainingAmount);
-                order.Amount = amountToTake;
-
-                highestSellOrders.Add(order);
-                accumulatedAmount += amountToTake;
+                throw new InvalidOperationException("InsufficientAmount");
             }
 
-            return highestSellOrders;
+            return lowestBuyOrders;
         }
 
         public List<ExchangeOrderBook> ReadOrderBooksFromFile(int numberOfLines)
         {
             List<ExchangeOrderBook> exchangeOrderBooks = new List<ExchangeOrderBook>();
 
-            string contentRootPath = Directory.GetCurrentDirectory();
+            string contentRootPath = AppContext.BaseDirectory;
             string orderBooksFilePath = Path.Combine(contentRootPath, "Data", "order_books_data");
-
+            
             if (File.Exists(orderBooksFilePath))
             {
                 var lines = File.ReadLines(orderBooksFilePath);
@@ -145,7 +120,7 @@ namespace Shared.Services
             }
             else
             {
-                throw new Exception("File doesn't exist.");
+                throw new Exception(ErrorCodes.FileMissing.ToString());
             }
         }
     }
