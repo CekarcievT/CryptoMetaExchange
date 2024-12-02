@@ -29,17 +29,17 @@ namespace BSDigitalPart1
                 Console.WriteLine($"Exchange name: {order.ExchangeName} Order amount: {order.Amount} Order price {order.Price}");
             }
 
-            Console.WriteLine($"Target amount: {3} Amount {bestBuy.Sum(order => order.Amount)} Total price: {bestBuy.Sum(order => order.Price * order.Amount)} ");
+            Console.WriteLine($"Target amount: {amountToBuy} Amount {bestBuy.Sum(order => order.Amount)} Total price: {bestBuy.Sum(order => order.Price * order.Amount)}");
 
             Console.WriteLine(Environment.NewLine);
 
             Console.WriteLine("Best sell");
             foreach (var order in bestSell)
             {
-                Console.WriteLine($"Exchange name: {order.ExchangeName} Order amount: {order.Amount} Order price {order.Price }");
+                Console.WriteLine($"Exchange name: {order.ExchangeName} Order amount: {order.Amount} Order price {order.Price}");
             }
 
-            Console.WriteLine($"Target amount: {3} Amount {bestSell.Sum(order => order.Amount)} Total price: {bestSell.Sum(order => order.Price * order.Amount)} ");
+            Console.WriteLine($"Target amount: {amountToSell} Amount {bestSell.Sum(order => order.Amount)} Total price: {bestSell.Sum(order => order.Price * order.Amount)}");
         }
     }
 }
