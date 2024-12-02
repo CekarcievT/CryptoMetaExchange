@@ -1,5 +1,6 @@
 ﻿using BSDigitalPart2.DTOs;
 using BSDigitalPart2.Infrastructure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Enums;
 using Shared.Interfaces;
@@ -19,8 +20,8 @@ namespace BSDigitalPart2.Controllers
             _priceEvaluationService = priceEvaluationService;
         }
 
-        [HttpGet("type/{type}/amount/{amount}")]
-        public async Task<IActionResult> UpdateChallenges(string type, decimal amount)
+        [HttpPost("type/{type}")]
+        public async Task<IActionResult> UpdateChallenges([FromBody] AmountDTO amount, string type)
         {
             ExchangeOrderDTO result = new ExchangeOrderDTO();
 
@@ -43,14 +44,24 @@ namespace BSDigitalPart2.Controllers
                  );
             }
 
+            if (amount.Amount <= 0)
+            {
+                return JsonDataResult<ExchangeOrderDTO>.MapResponse(
+                    false,
+                    null,
+                    new List<string> { "Invalid amount." },
+                    StatusCodes.Status400BadRequest
+                );
+            }
+
             List<ExchangeOrderBook> exchangeOrderBooks = _priceEvaluationService.ReadOrderBooksFromFile(numberOfOrderBooks);
 
-            List<ExchangeOrder> bestPriceOrders = _priceEvaluationService.CalculateBestOrderPrice(exchangeOrderBooks, amount, orderType);
+            List<ExchangeOrder> bestPriceOrders = _priceEvaluationService.CalculateBestOrderPrice(exchangeOrderBooks, amount.Amount, orderType);
 
             result.Orders = bestPriceOrders;
 
             result.TotalPrice = bestPriceOrders.Sum(order => order.Price * order.Amount);
-            result.TotalAmout = bestPriceOrders.Sum(order => order.Amount);
+            result.TotalAmount = bestPriceOrders.Sum(order => order.Amount);
 
             return JsonDataResult<ExchangeOrderDTO>.MapResponse(
                   true,
