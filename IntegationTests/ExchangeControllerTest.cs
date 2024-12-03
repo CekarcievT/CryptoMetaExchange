@@ -95,7 +95,7 @@ namespace IntegationTests
 
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var requestUri = $"https://localhost:5001/exchange/type/buy";
+            var requestUri = $"http://localhost:5000/exchange/type/buy";
             var response = await _client.PostAsync(requestUri, content);
 
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
@@ -110,7 +110,7 @@ namespace IntegationTests
 
             var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var requestUri = $"https://localhost:5001/exchange/type/{type}";
+            var requestUri = $"http://localhost:5000/exchange/type/{type}";
             var response = await _client.PostAsync(requestUri, content);
 
             return response;

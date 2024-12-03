@@ -17,7 +17,7 @@ namespace BSDigitalPart2
             builder.WebHost.UseKestrel(options =>
             {
                 options.ListenAnyIP(5000); // Listen on port 5000 for HTTP
-                options.ListenAnyIP(5001, listenOptions => listenOptions.UseHttps()); // Listen on port 5001 for HTTPS
+                //options.ListenAnyIP(5001, listenOptions => listenOptions.UseHttps()); // Listen on port 5001 for HTTPS
             });
 
             builder.Services.AddEndpointsApiExplorer();
@@ -29,7 +29,7 @@ namespace BSDigitalPart2
             app.UseSwagger();
             app.UseSwaggerUI();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 

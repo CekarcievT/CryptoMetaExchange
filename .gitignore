@@ -11,3 +11,6 @@
 /BSDigitalPart2/obj
 /IntegationTests/bin/Debug/net8.0
 /IntegationTests/obj
+/IntegationTests/bin/Release/net8.0
+/BSDigitalPart2/bin/Release/net8.0
+/Shared/bin/Release/net8.0
